@@ -106,6 +106,7 @@ def Result_PSNR(experiment_name):
         f.write('average Bt PSNR: %f\n'% aver_psnr_bt)
 
 
+
 def Result_SSIM(experiment_name):
     if platform:
         result_path = r'G:\Projects\RainCycleGAN_cross\results'
