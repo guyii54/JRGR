@@ -66,7 +66,7 @@ class RainCycleModel(BaseModel):
                                  'pred_Rs', 'pred_Rst', 'pred_pred_Rt', 'pred_pred_Rts',
                                  'pred_Rt', 'pred_Rts', 'pred_pred_Rs', 'pred_pred_Rst']
         else:
-            self.visual_names = ['Os', 'Ot', 'Bs','Bt',
+            self.visual_names = ['Os', 'Ot', 'Bs', 'Bt', 'Rs', 'Rt',
                                  'pred_Bs', 'pred_Ot', 'pred_pred_Bs', 'pred_pred_Os',
                                  'pred_Bt', 'pred_Os', 'pred_pred_Bt', 'pred_pred_Ot',
                                  'pred_Rs', 'pred_Rst', 'pred_pred_Rt', 'pred_pred_Rts',
@@ -185,6 +185,9 @@ class RainCycleModel(BaseModel):
 
     def forward(self):
         """Run forward pass. This will be called by both functions <optimize_parameters> and <test>."""
+        if not self.isTrain:
+            self.Rs = self.Os - self.Bs
+            self.Rt = self.Ot - self.Bt
         # syn - real
         self.pred_Bs = self.netG1(self.Os)
         self.pred_Rs = self.Os - self.pred_Bs
