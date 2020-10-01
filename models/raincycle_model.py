@@ -58,7 +58,7 @@ class RainCycleModel(BaseModel):
         """
         BaseModel.__init__(self, opt)  # call the initialization method of BaseModel
         # specify the training losses you want to print out. The program will call base_model.get_current_losses to plot the losses to the console and save them to the disk.
-        self.loss_names = ['MSE','GAN','Cycle','G_total','D_Ot', 'D_Os','D_B','Idt']
+        self.loss_names = ['MSE','GAN','Cycle','G_total','D_Ot', 'D_Os','D_B']
         # specify the images you want to save and display. The program will call base_model.get_current_visuals to save and display these images.
         if self.isTrain:
             self.visual_names = ['Os','Ot','Bs',
