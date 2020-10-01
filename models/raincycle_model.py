@@ -39,9 +39,10 @@ class RainCycleModel(BaseModel):
         """
         parser.set_defaults(dataset_mode='rain')  # You can rewrite default values for this model. For example, this model usually uses aligned dataset as its dataset.
         if is_train:
-            parser.add_argument('--lambda_MSE', type=float, default=10.0, help='weight for the regression loss')  # You can define new arguments for this model.
-            parser.add_argument('--lambda_GAN', type=float, default=4.0, help='weight for the regression loss')
-            parser.add_argument('--lambda_Cycle', type=float, default=6.0, help='weight for the regression loss')
+            parser.add_argument('--lambda_MSE', type=float, default=50.0, help='weight for the mse loss')  # You can define new arguments for this model.
+            parser.add_argument('--lambda_GAN', type=float, default=4.0, help='weight for the gan loss')
+            parser.add_argument('--lambda_Cycle', type=float, default=40.0, help='weight for the cycle loss')
+            parser.add_argument('--lambda_Idt', type=float, default=20.0, help='weight for the identity loss')
 
         return parser
 
@@ -57,7 +58,7 @@ class RainCycleModel(BaseModel):
         """
         BaseModel.__init__(self, opt)  # call the initialization method of BaseModel
         # specify the training losses you want to print out. The program will call base_model.get_current_losses to plot the losses to the console and save them to the disk.
-        self.loss_names = ['MSE','GAN','Cycle','G_total','D_Ot', 'D_Os','D_B']
+        self.loss_names = ['MSE','GAN','Cycle','G_total','D_Ot', 'D_Os','D_B','Idt']
         # specify the images you want to save and display. The program will call base_model.get_current_visuals to save and display these images.
         if self.isTrain:
             self.visual_names = ['Os','Ot','Bs',
@@ -143,6 +144,7 @@ class RainCycleModel(BaseModel):
             self.criterion_MSE = torch.nn.MSELoss()
             self.criterion_GAN = self.criterion_GAN = networks.GANLoss(opt.gan_mode).to(self.device)
             self.criterionCycle = torch.nn.L1Loss()
+            self.criterionIdt = torch.nn.L1Loss()
 
 
             self.Pool_fake_Os = ImagePool(opt.pool_size)
@@ -213,9 +215,15 @@ class RainCycleModel(BaseModel):
         lambda_MSE = self.opt.lambda_MSE
         lambda_GAN = self.opt.lambda_GAN
         lambda_Cycle = self.opt.lambda_Cycle
+        lambda_Idt = self.opt.lambda_Idt
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
         # caculate the intermediate results if necessary; here self.output has been computed during function <forward>
         # calculate loss given the input and intermediate results
+
+        # # Identity Loss
+        # if lambda_Idt >0:
+        #     self.Idt_Bs = self.netG1(self.Bs)
+
 
         # Cycle Loss
         self.Cycle_Os = self.criterionCycle(self.Os, self.pred_pred_Os)
