@@ -6,7 +6,7 @@ import numpy as np
 
 ubuntu = 0
 windows = 1
-platform = windows
+platform = ubuntu
 
 def crop_and_resize_square(img, tosize = 400):
     height, width = img.shape[0], img.shape[1]
@@ -59,7 +59,7 @@ def Result_PSNR(experiment_name):
         # result_path = r'D:\LowLevelforReal\RainCycleGAN_cross\results'
     else:
         # result_path = r'/media/solanliu/YYT2T/Projects/RainCycleGAN_cross/results'
-        result_path = r'/home/solanliu/yeyuntong/RainCycleGAN_ubuntu/results'
+        result_path = r'/home/solanliu/yeyuntong/RainCycleGAN_cross/results'
     image_path = os.path.join(result_path, experiment_name, 'test_latest', 'images')
     eval_file = os.path.join(result_path, experiment_name, 'test_latest','eval_file.txt')
     aver_psnr_bs = 0.
@@ -113,7 +113,7 @@ def Result_SSIM(experiment_name):
         # result_path = r'D:\LowLevelforReal\RainCycleGAN_cross\results'
     else:
         # result_path = r'/media/solanliu/YYT2T/Projects/RainCycleGAN_cross/results'
-        result_path = r'/home/solanliu/yeyuntong/RainCycleGAN_ubuntu/results'
+        result_path = r'/home/solanliu/yeyuntong/RainCycleGAN_cross/results'
     image_path = os.path.join(result_path, experiment_name, 'test_latest', 'images')
     eval_file = os.path.join(result_path, experiment_name, 'test_latest', 'eval_file.txt')
     aver_ssim_bs = 0.
@@ -214,6 +214,6 @@ def Result_SSIM(experiment_name):
 
 
 if __name__ == '__main__':
-    Result_SSIM('lr1e-6')
+    Result_PSNR('nD_5')
     # Result_SSIM()
     # Dataset_PSNR()
