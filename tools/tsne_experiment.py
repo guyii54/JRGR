@@ -93,8 +93,9 @@ def mscatter(x,y,ax=None, m=None, **kw):
     return sc
 
 def plot_embedding_2(data, n_target, label, title):
-    color_map = {'Rs': 'b', 'Rt': 'g', 'pred_Rt': 'r', 'pred_Rs': 'c'}
-    make_map = {'Rs': 'v', 'Rt': '*', 'pred_Rt': 'D', 'pred_Rs': 'p'}
+    color_map = {'Rs': 'b', 'Rt': 'b', 'pred_Rt': 'r', 'pred_Rs': 'r'}
+    make_map = {'Rs': '*', 'Rt': 'D', 'pred_Rt': 'D', 'pred_Rs': '*'}
+    label_map  = {'Rs': 'Syn rain', 'Rt': 'Real rain', 'pred_Rt': 'Pred real rain', 'pred_Rs': 'Pred syn rain'}
     size = 25
     x_min, x_max = np.min(data, 0), np.max(data, 0)
     data = (data - x_min) / (x_max - x_min)
@@ -106,7 +107,8 @@ def plot_embedding_2(data, n_target, label, title):
         data_y = data[i_target*n_point : (i_target+1) * n_point, 1]
         color = color_map[i_label]
         m = make_map[i_label]
-        plt.scatter(data_x, data_y, s=size, label=i_label, marker=m, c=color, cmap=plt.cm.RdYlBu)
+        label_m = label_map[i_label]
+        plt.scatter(data_x, data_y, s=size, label=label_m, marker=m, c=color, cmap=plt.cm.RdYlBu)
     plt.title(title)
     plt.legend()
     plt.show()
@@ -145,7 +147,7 @@ def main():
     print('Computing t-SNE embedding')
     print('num_images: %d\nnum_feature: %d' % (n_samples, n_features))
     print('data shape: ',data.shape)
-    tsne = TSNE(n_components=2, init='pca', random_state=0, learning_rate=200, perplexity=20,n_iter=1000)
+    tsne = TSNE(n_components=2, init='pca', random_state=0, learning_rate=100, perplexity=10,n_iter=1000)
     t0 = time()
     result = tsne.fit_transform(data)
     plot_embedding_2(result, n_target, label, 'title')
