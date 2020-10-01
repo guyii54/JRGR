@@ -45,20 +45,7 @@ def get_data(experiment_name, img_nums = 50):
         for name in name_list[0:img_nums]:
             little_name = name.replace('pred_pred_Bs.png', '')
         # print(little_name)
-            if visualize_name == 'Rs':
-                Os = cv2.imread(os.path.join(image_path,little_name + 'Os.png'))
-                Bs = cv2.imread(os.path.join(image_path,little_name + 'Bs.png'))
-                img = Os - Bs
-                # cv2.imshow('Rs',img)
-                # cv2.waitKey()
-            elif visualize_name == 'Rt':
-                Ot = cv2.imread(os.path.join(image_path, little_name + 'Ot.png'))
-                Bt = cv2.imread(os.path.join(image_path, little_name + 'Bt.png'))
-                img = Ot - Bt
-                # cv2.imshow('Rt', img)
-                # cv2.waitKey()
-            else:
-                img = cv2.imread(os.path.join(image_path,little_name + visualize_name+'.png'))
+            img = cv2.imread(os.path.join(image_path,little_name + visualize_name+'.png'))
             feature = np.reshape(img, feature_length)
             datas[count,:] = feature
             labels.append(visualize_name)
@@ -154,11 +141,11 @@ def plot_embedding(data, label):
 
 
 def main():
-    data, label, n_samples, n_features, n_target = get_data('lr1e-5', 100)
+    data, label, n_samples, n_features, n_target = get_data('lr1e-5', 150)
     print('Computing t-SNE embedding')
     print('num_images: %d\nnum_feature: %d' % (n_samples, n_features))
     print('data shape: ',data.shape)
-    tsne = TSNE(n_components=2, init='pca', random_state=0, learning_rate=600, perplexity=20,n_iter=1000)
+    tsne = TSNE(n_components=2, init='pca', random_state=0, learning_rate=200, perplexity=20,n_iter=1000)
     t0 = time()
     result = tsne.fit_transform(data)
     plot_embedding_2(result, n_target, label, 'title')
