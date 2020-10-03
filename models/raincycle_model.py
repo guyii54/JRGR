@@ -157,7 +157,7 @@ class RainCycleModel(BaseModel):
 
             # define and initialize optimizers. You can define one optimizer for each network.
             # If two networks are updated at the same time, you can use itertools.chain to group them. See cycle_gan_model.py for an example.
-            parameters_list=[dict(params=self.netG1.parameters(), lr=opt.lr / 10)]
+            parameters_list=[dict(params=self.netG1.parameters(), lr=opt.lr / 100)]
             parameters_list.append(dict(params=self.netG2.parameters(), lr=opt.lr))
             parameters_list.append(dict(params=self.netG3.parameters(), lr=opt.lr / 10))
             parameters_list.append(dict(params=self.netG4.parameters(), lr=opt.lr))
