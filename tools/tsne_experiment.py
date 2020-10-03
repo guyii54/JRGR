@@ -25,7 +25,7 @@ def get_data(experiment_name, img_nums = 50):
     #                    'pred_Bt', 'pred_Os', 'pred_pred_Bt', 'pred_pred_Ot',
     #                    'pred_Rs', 'pred_Rst', 'pred_pred_Rt', 'pred_pred_Rts',
     #                    'pred_Rt', 'pred_Rts', 'pred_pred_Rs', 'pred_pred_Rst']
-    visualize_names = ['Rs', 'Rt','pred_Rs','pred_Rt']
+    visualize_names = ['Rs', 'Rt','pred_Rs','pred_Rt','pred_Rts','pred_Rst']
     print('getting datas......')
     if platform:
         result_path = r'G:\Projects\RainCycleGAN_cross\results'
@@ -93,9 +93,9 @@ def mscatter(x,y,ax=None, m=None, **kw):
     return sc
 
 def plot_embedding_2(data, n_target, label, title):
-    color_map = {'Rs': 'b', 'Rt': 'b', 'pred_Rt': 'r', 'pred_Rs': 'r'}
-    make_map = {'Rs': '*', 'Rt': 'D', 'pred_Rt': 'D', 'pred_Rs': '*'}
-    label_map  = {'Rs': 'Syn rain', 'Rt': 'Real rain', 'pred_Rt': 'Pred real rain', 'pred_Rs': 'Pred syn rain'}
+    color_map = {'Rs': 'b', 'Rt': 'b', 'pred_Rt': 'r', 'pred_Rs': 'r','pred_Rst':'g','pred_Rts':'g'}
+    make_map = {'Rs': '*', 'Rt': 'D', 'pred_Rt': 'D', 'pred_Rs': '*','pred_Rst':'D','pred_Rts':'*'}
+    label_map  = {'Rs': 'Syn rain', 'Rt': 'Real rain', 'pred_Rt': 'Pred real rain', 'pred_Rs': 'Pred syn rain','pred_Rst':'Gen real rain','pred_Rts':'Gen syn rain'}
     size = 25
     x_min, x_max = np.min(data, 0), np.max(data, 0)
     data = (data - x_min) / (x_max - x_min)
@@ -150,7 +150,7 @@ def main():
     tsne = TSNE(n_components=2, init='pca', random_state=0, learning_rate=100, perplexity=10,n_iter=1000)
     t0 = time()
     result = tsne.fit_transform(data)
-    plot_embedding_2(result, n_target, label, 'title')
+    plot_embedding_2(result, n_target, label, 'Visulization of rain layer feature')
     # plt.show(fig)
 
 

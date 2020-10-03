@@ -252,7 +252,7 @@ def Result_SSIM(experiment_name):
 
 
 if __name__ == '__main__':
-    # Result_PSNR('nD_5')
-    Result_cycleGAN('cycleGAN')
+    Result_PSNR('nD_5')
+    # Result_cycleGAN('cycleGAN')
     # Result_SSIM()
     # Dataset_PSNR()
