@@ -54,8 +54,8 @@ class CycleGANModel(BaseModel):
         # specify the training losses you want to print out. The training/test scripts will call <BaseModel.get_current_losses>
         self.loss_names = ['D_A', 'G_A', 'cycle_A', 'idt_A', 'D_B', 'G_B', 'cycle_B', 'idt_B']
         # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
-        visual_names_A = ['real_A', 'fake_B', 'rec_A']
-        visual_names_B = ['real_B', 'fake_A', 'rec_B']
+        visual_names_A = ['real_A', 'fake_B', 'rec_A', 'Ot', 'Bt']
+        visual_names_B = ['real_B', 'fake_A', 'rec_B', 'Bs', 'Os']
         if self.isTrain and self.opt.lambda_identity > 0.0:  # if identity loss is used, we also visualize idt_B=G_A(B) ad idt_A=G_A(B)
             visual_names_A.append('idt_B')
             visual_names_B.append('idt_A')
@@ -104,10 +104,20 @@ class CycleGANModel(BaseModel):
 
         The option 'direction' can be used to swap domain A and domain B.
         """
-        AtoB = self.opt.direction == 'AtoB'
-        self.real_A = input['A' if AtoB else 'B'].to(self.device)
-        self.real_B = input['B' if AtoB else 'A'].to(self.device)
-        self.image_paths = input['A_paths' if AtoB else 'B_paths']
+        # AtoB = self.opt.direction == 'AtoB'
+        # self.real_A = input['A' if AtoB else 'B'].to(self.device)
+        # self.real_B = input['B' if AtoB else 'A'].to(self.device)
+        # self.image_paths = input['A_paths' if AtoB else 'B_paths']
+
+        self.Os = input['O_s'].to(self.device)
+        self.Bs = input['B_s'].to(self.device)
+        self.Ot = input['O_t'].to(self.device)
+        if not self.isTrain:
+            self.Bt = input['B_t'].to(self.device)
+        # self.Bt = input['B_t'].to(self.device)
+        self.image_paths = input['path']  # for test
+        self.real_A = self.Ot
+        self.real_B = self.Bs
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""

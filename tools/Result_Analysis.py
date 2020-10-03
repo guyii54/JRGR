@@ -6,7 +6,7 @@ import numpy as np
 
 ubuntu = 0
 windows = 1
-platform = ubuntu
+platform = windows
 
 def crop_and_resize_square(img, tosize = 400):
     height, width = img.shape[0], img.shape[1]
@@ -104,6 +104,44 @@ def Result_PSNR(experiment_name):
     with open(eval_file, 'w') as f:
         f.write('average Bs PSNR: %f\n'% aver_psnr_bs)
         f.write('average Bt PSNR: %f\n'% aver_psnr_bt)
+
+def Result_cycleGAN(experiment_name):
+    if platform:
+        result_path = r'G:\Projects\RainCycleGAN_cross\results'
+        # result_path = r'D:\LowLevelforReal\RainCycleGAN_cross\results'
+    else:
+        # result_path = r'/media/solanliu/YYT2T/Projects/RainCycleGAN_cross/results'
+        result_path = r'/home/solanliu/yeyuntong/RainCycleGAN_cross/results'
+    image_path = os.path.join(result_path, experiment_name, 'test_latest', 'images')
+    eval_file = os.path.join(result_path, experiment_name, 'test_latest','eval_file.txt')
+    aver_psnr_bt = 0.
+    aver_ssim_bt = 0.
+    name_list = os.listdir(image_path)
+    name_list = fnmatch.filter(name_list, '*_fake_A.png')
+    count = 1
+    for name in name_list:
+        little_name = name.replace('fake_A.png', '')
+        # print(little_name)
+        pred_Bt_file = little_name + 'fake_B.png'
+        Bs_file = little_name + 'Bt.png'
+        pred_Bt = cv2.imread(os.path.join(image_path, pred_Bt_file))
+        Bt = cv2.imread(os.path.join(image_path, Bs_file))
+        try:
+            tmp_psnr_bt = compare_psnr(pred_Bt, Bt)
+            tmp_ssim_bt = compare_ssim(pred_Bt, Bt, multichannel=True)
+            print('tmp:', tmp_psnr_bt, tmp_ssim_bt)
+            aver_psnr_bt = (aver_psnr_bt * count + tmp_psnr_bt) / (count + 1)
+            aver_ssim_bt = (aver_ssim_bt * count + tmp_ssim_bt) / (count + 1)
+            count += 1
+        except:
+            print('pass:',pred_Bt_file)
+            pass
+
+    print('average Bt PSNR: ', aver_psnr_bt)
+    print('average Bt SSIM: ', aver_ssim_bt)
+    with open(eval_file, 'w') as f:
+        f.write('average Bt PSNR: %f\n'% aver_psnr_bt)
+        f.write('average Bt SSIM: %f\n'% aver_ssim_bt)
 
 
 
@@ -214,6 +252,7 @@ def Result_SSIM(experiment_name):
 
 
 if __name__ == '__main__':
-    Result_PSNR('nD_5')
+    # Result_PSNR('nD_5')
+    Result_cycleGAN('cycleGAN')
     # Result_SSIM()
     # Dataset_PSNR()
