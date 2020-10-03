@@ -39,7 +39,7 @@ class RainCycleModel(BaseModel):
         """
         parser.set_defaults(dataset_mode='rain')  # You can rewrite default values for this model. For example, this model usually uses aligned dataset as its dataset.
         if is_train:
-            parser.add_argument('--lambda_MSE', type=float, default=50.0, help='weight for the mse loss')  # You can define new arguments for this model.
+            parser.add_argument('--lambda_MSE', type=float, default=40.0, help='weight for the mse loss')  # You can define new arguments for this model.
             parser.add_argument('--lambda_GAN', type=float, default=4.0, help='weight for the gan loss')
             parser.add_argument('--lambda_Cycle', type=float, default=40.0, help='weight for the cycle loss')
             parser.add_argument('--lambda_Idt', type=float, default=20.0, help='weight for the identity loss')
