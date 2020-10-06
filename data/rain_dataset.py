@@ -52,10 +52,10 @@ class RainDataset(BaseDataset):
         # self.image_paths = []  # You can call sorted(make_dataset(self.root, opt.max_dataset_size)) to get all the image paths under the directory self.root
         BaseDataset.__init__(self, opt)
         self.data_root = opt.dataroot
-        self.O_t_path = os.path.join(self.data_root,opt.phase,'O_t')
-        self.O_s_path = os.path.join(self.data_root,opt.phase,'O_s')
-        self.B_s_path = os.path.join(self.data_root,opt.phase,'B_s')
-        self.B_t_path = os.path.join(self.data_root,opt.phase,'B_t')
+        self.O_t_path = os.path.join(self.data_root,opt.phase,'Ot')
+        self.O_s_path = os.path.join(self.data_root,opt.phase,'Os')
+        self.B_s_path = os.path.join(self.data_root,opt.phase,'Bs')
+        self.B_t_path = os.path.join(self.data_root,opt.phase,'Bt')
         self.O_t_name_list = os.listdir(self.O_t_path)
         self.O_s_name_list = os.listdir(self.O_s_path)
         self.B_t_name_list = os.listdir(self.B_t_path)

@@ -214,6 +214,6 @@ def Result_SSIM(experiment_name):
 
 
 if __name__ == '__main__':
-    Result_PSNR('nD_5')
+    Result_PSNR('lr_split_1e-4_50_4_40')
     # Result_SSIM()
     # Dataset_PSNR()
