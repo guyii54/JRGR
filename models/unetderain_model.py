@@ -32,7 +32,8 @@ class UnetDerainModel(BaseModel):
         Returns:
             the modified parser.
         """
-        parser.set_defaults(dataset_mode='aligned')  # You can rewrite default values for this model. For example, this model usually uses aligned dataset as its dataset.
+        parser.set_defaults(dataset_mode='rain')  # You can rewrite default values for this model. For example, this model usually uses aligned dataset as its dataset.
+        parser.add_argument('--reverse', type=int, default=0, help='whether see Ot as Os in test')
         if is_train:
             parser.add_argument('--lambda_regression', type=float, default=1.0, help='weight for the regression loss')  # You can define new arguments for this model.
 
@@ -75,9 +76,17 @@ class UnetDerainModel(BaseModel):
         Parameters:
             input: a dictionary that contains the data itself and its metadata information.
         """
-        self.Os = input['O_s'].to(self.device)
-        self.Bs = input['B_s'].to(self.device)
-        self.Ot = input['O_t'].to(self.device)
+        if not self.opt.reverse:
+            self.Os = input['O_s'].to(self.device)
+            self.Bs = input['B_s'].to(self.device)
+            self.Ot = input['O_t'].to(self.device)
+            self.Bt = input['B_t'].to(self.device)
+        else:
+            self.Os = input['O_t'].to(self.device)
+            self.Bs = input['B_t'].to(self.device)
+            self.Ot = input['O_s'].to(self.device)
+            self.Bt = input['B_s'].to(self.device)
+
         self.image_paths = input['path']  # for test
 
     def forward(self):

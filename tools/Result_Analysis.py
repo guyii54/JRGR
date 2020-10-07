@@ -209,11 +209,43 @@ def Result_SSIM(experiment_name):
 #             cv2.imwrite(os.path.join(save_path,little_name+'pred_pred_Rt.png'),pred_pred_Rt)
 #             cv2.imwrite(os.path.join(save_path,little_name+'pred_Rst.png'),pred_Rst)
 #
+def Result_single_PSNR(experiment_name):
+    if platform:
+        result_path = r'G:\Projects\RainCycleGAN_cross\results'
+        # result_path = r'D:\LowLevelforReal\RainCycleGAN_cross\results'
+    else:
+        # result_path = r'/media/solanliu/YYT2T/Projects/RainCycleGAN_cross/results'
+        result_path = r'/home/solanliu/yeyuntong/RainCycleGAN_cross/results'
+    image_path = os.path.join(result_path, experiment_name, 'test_latest', 'images')
+    eval_file = os.path.join(result_path, experiment_name, 'test_latest','eval_file.txt')
+    aver_psnr_bs = 0.
+    aver_psnr_bt = 0.
+    bs_list = os.listdir(image_path)
+    bs_list = fnmatch.filter(bs_list, '*_pred_Bs.png')
+    count = 1
+    for name in bs_list:
+        little_name = name.replace('pred_Bs.png', '')
+        # print(little_name)
+        pred_Bs_file = little_name + 'pred_Bs.png'
+        Bs_file = little_name + 'Bs.png'
+        pred_Bs = cv2.imread(os.path.join(image_path, pred_Bs_file))
+        Bs = cv2.imread(os.path.join(image_path, Bs_file))
+        try:
+            tmp_psnr_bs = compare_psnr(pred_Bs, Bs)
+            print('tmp_psnr:', tmp_psnr_bs)
+            aver_psnr_bs = (aver_psnr_bs * count + tmp_psnr_bs) / (count + 1)
+            count += 1
+        except:
+            print('pass:',pred_Bs_file)
+            pass
 
+    print('average PSNR: ', aver_psnr_bs)
+    with open(eval_file, 'w') as f:
+        f.write('average PSNR: %f\n'% aver_psnr_bs)
 
 
 
 if __name__ == '__main__':
-    Result_PSNR('lr_split_1e-4_50_4_40')
+    Result_single_PSNR('light_UnetDerain')
     # Result_SSIM()
     # Dataset_PSNR()
