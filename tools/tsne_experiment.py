@@ -95,7 +95,7 @@ def mscatter(x,y,ax=None, m=None, **kw):
 def plot_embedding_2(data, n_target, label, title):
     color_map = {'Rs': 'b', 'Rt': 'b', 'pred_Rt': 'r', 'pred_Rs': 'r','pred_Rst':'g','pred_Rts':'g'}
     make_map = {'Rs': '*', 'Rt': 'D', 'pred_Rt': 'D', 'pred_Rs': '*','pred_Rst':'D','pred_Rts':'*'}
-    label_map  = {'Rs': 'Syn rain', 'Rt': 'Real rain', 'pred_Rt': 'Pred real rain', 'pred_Rs': 'Pred syn rain','pred_Rst':'Gen real rain','pred_Rts':'Gen syn rain'}
+    label_map  = {'Rs': 'Syn rain', 'Rt': 'Real rain', 'pred_Rt': 'Pred real rain', 'pred_Rs': 'Decom syn rain','pred_Rst':'Gen real rain','pred_Rts':'Decom syn rain'}
     size = 25
     x_min, x_max = np.min(data, 0), np.max(data, 0)
     data = (data - x_min) / (x_max - x_min)

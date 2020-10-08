@@ -112,8 +112,8 @@ class CycleGANModel(BaseModel):
         self.Os = input['O_s'].to(self.device)
         self.Bs = input['B_s'].to(self.device)
         self.Ot = input['O_t'].to(self.device)
-        if not self.isTrain:
-            self.Bt = input['B_t'].to(self.device)
+        # if not self.isTrain:
+        self.Bt = input['B_t'].to(self.device)
         # self.Bt = input['B_t'].to(self.device)
         self.image_paths = input['path']  # for test
         self.real_A = self.Ot
