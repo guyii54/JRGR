@@ -6,7 +6,7 @@ import numpy as np
 
 ubuntu = 0
 windows = 1
-platform = windows
+platform = ubuntu
 
 def crop_and_resize_square(img, tosize = 400):
     height, width = img.shape[0], img.shape[1]
@@ -104,44 +104,6 @@ def Result_PSNR(experiment_name):
     with open(eval_file, 'w') as f:
         f.write('average Bs PSNR: %f\n'% aver_psnr_bs)
         f.write('average Bt PSNR: %f\n'% aver_psnr_bt)
-
-def Result_cycleGAN(experiment_name):
-    if platform:
-        result_path = r'G:\Projects\RainCycleGAN_cross\results'
-        # result_path = r'D:\LowLevelforReal\RainCycleGAN_cross\results'
-    else:
-        # result_path = r'/media/solanliu/YYT2T/Projects/RainCycleGAN_cross/results'
-        result_path = r'/home/solanliu/yeyuntong/RainCycleGAN_cross/results'
-    image_path = os.path.join(result_path, experiment_name, 'test_latest', 'images')
-    eval_file = os.path.join(result_path, experiment_name, 'test_latest','eval_file.txt')
-    aver_psnr_bt = 0.
-    aver_ssim_bt = 0.
-    name_list = os.listdir(image_path)
-    name_list = fnmatch.filter(name_list, '*_fake_A.png')
-    count = 1
-    for name in name_list:
-        little_name = name.replace('fake_A.png', '')
-        # print(little_name)
-        pred_Bt_file = little_name + 'fake_B.png'
-        Bs_file = little_name + 'Bt.png'
-        pred_Bt = cv2.imread(os.path.join(image_path, pred_Bt_file))
-        Bt = cv2.imread(os.path.join(image_path, Bs_file))
-        try:
-            tmp_psnr_bt = compare_psnr(pred_Bt, Bt)
-            tmp_ssim_bt = compare_ssim(pred_Bt, Bt, multichannel=True)
-            print('tmp:', tmp_psnr_bt, tmp_ssim_bt)
-            aver_psnr_bt = (aver_psnr_bt * count + tmp_psnr_bt) / (count + 1)
-            aver_ssim_bt = (aver_ssim_bt * count + tmp_ssim_bt) / (count + 1)
-            count += 1
-        except:
-            print('pass:',pred_Bt_file)
-            pass
-
-    print('average Bt PSNR: ', aver_psnr_bt)
-    print('average Bt SSIM: ', aver_ssim_bt)
-    with open(eval_file, 'w') as f:
-        f.write('average Bt PSNR: %f\n'% aver_psnr_bt)
-        f.write('average Bt SSIM: %f\n'% aver_ssim_bt)
 
 
 
@@ -247,12 +209,44 @@ def Result_SSIM(experiment_name):
 #             cv2.imwrite(os.path.join(save_path,little_name+'pred_pred_Rt.png'),pred_pred_Rt)
 #             cv2.imwrite(os.path.join(save_path,little_name+'pred_Rst.png'),pred_Rst)
 #
+def Result_single_PSNR(experiment_name):
+    if platform:
+        result_path = r'G:\Projects\RainCycleGAN_cross\results'
+        # result_path = r'D:\LowLevelforReal\RainCycleGAN_cross\results'
+    else:
+        # result_path = r'/media/solanliu/YYT2T/Projects/RainCycleGAN_cross/results'
+        result_path = r'/home/solanliu/yeyuntong/RainCycleGAN_cross/results'
+    image_path = os.path.join(result_path, experiment_name, 'test_latest', 'images')
+    eval_file = os.path.join(result_path, experiment_name, 'test_latest','eval_file.txt')
+    aver_psnr_bs = 0.
+    aver_psnr_bt = 0.
+    bs_list = os.listdir(image_path)
+    bs_list = fnmatch.filter(bs_list, '*_pred_Bs.png')
+    count = 1
+    for name in bs_list:
+        little_name = name.replace('pred_Bs.png', '')
+        # print(little_name)
+        pred_Bs_file = little_name + 'pred_Bs.png'
+        Bs_file = little_name + 'Bs.png'
+        pred_Bs = cv2.imread(os.path.join(image_path, pred_Bs_file))
+        Bs = cv2.imread(os.path.join(image_path, Bs_file))
+        try:
+            tmp_psnr_bs = compare_psnr(pred_Bs, Bs)
+            print('tmp_psnr:', tmp_psnr_bs)
+            aver_psnr_bs = (aver_psnr_bs * count + tmp_psnr_bs) / (count + 1)
+            count += 1
+        except:
+            print('pass:',pred_Bs_file)
+            pass
 
+    print('average PSNR: ', aver_psnr_bs)
+    with open(eval_file, 'w') as f:
+        f.write('average PSNR: %f\n'% aver_psnr_bs)
 
 
 
 if __name__ == '__main__':
-    Result_PSNR('nD_5')
-    # Result_cycleGAN('cycleGAN')
+    # Result_single_PSNR('middle_UnetDerain')
+    Result_PSNR('m_lrs1e-4')
     # Result_SSIM()
     # Dataset_PSNR()

@@ -99,6 +99,10 @@ class RainDataset(BaseDataset):
         O_s = cv2.imread(self.O_s_file)
         B_s = cv2.imread(self.B_s_file)
         B_t = cv2.imread(self.B_t_file)
+        O_t = cv2.cvtColor(O_t, cv2.COLOR_BGR2RGB)
+        O_s = cv2.cvtColor(O_s, cv2.COLOR_BGR2RGB)
+        B_s = cv2.cvtColor(B_s, cv2.COLOR_BGR2RGB)
+        B_t = cv2.cvtColor(B_t, cv2.COLOR_BGR2RGB)
 
         # crop O_s and B_s
         img_size = min(O_s.shape[0], O_s.shape[1])
