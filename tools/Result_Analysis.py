@@ -246,6 +246,6 @@ def Result_single_PSNR(experiment_name):
 
 
 if __name__ == '__main__':
-    Result_single_PSNR('light_UnetDerain')
+    Result_single_PSNR('middle_UnetDerain')
     # Result_SSIM()
     # Dataset_PSNR()
