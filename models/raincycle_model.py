@@ -43,6 +43,7 @@ class RainCycleModel(BaseModel):
             parser.add_argument('--lambda_GAN', type=float, default=4.0, help='weight for the gan loss')
             parser.add_argument('--lambda_Cycle', type=float, default=40.0, help='weight for the cycle loss')
             parser.add_argument('--lambda_Idt', type=float, default=20.0, help='weight for the identity loss')
+            parser.add_argument('--init_derain', type=str, default='1,3', help='weight for the identity loss')
 
         return parser
 
@@ -123,17 +124,20 @@ class RainCycleModel(BaseModel):
             # # self.netDNCNN_model.fix_parameters()
             # print('initial netG1, netG3 with %s successfully!' % load_path)
             # self.fix_parameters()
-            load_filename = 'latest_net_UnetDerain.pth'
-            if self.opt.singleDNCNN_load_path == None:
-                print('FileNotFoundError: singleDNCNN_load_path is not found!')
-                raise FileNotFoundError
-            load_path = os.path.join(self.opt.singleDNCNN_load_path, load_filename)
-            model_G1 = self.netG1.module
-            model_G3 = self.netG3.module
-            state_dict = torch.load(load_path, map_location=str(self.device))
-            model_G1.load_state_dict(state_dict)
-            model_G3.load_state_dict(state_dict)
-            print('initial netG1, netG3 with %s successfully!' % load_path)
+            if self.opt.init_derain != '0':
+                load_filename = 'latest_net_UnetDerain.pth'
+                if self.opt.singleDNCNN_load_path == None:
+                    print('FileNotFoundError: singleDNCNN_load_path is not found!')
+                    raise FileNotFoundError
+                load_path = os.path.join(self.opt.singleDNCNN_load_path, load_filename)
+                state_dict = torch.load(load_path, map_location=str(self.device))
+                if '1' in self.opt.init_derain:
+                    model_G1 = self.netG1.module
+                    model_G1.load_state_dict(state_dict)
+                if '3' in self.opt.init_derain:
+                    model_G3 = self.netG3.module
+                    model_G3.load_state_dict(state_dict)
+                    print('initial netG1, netG3 with %s successfully!' % load_path)
             # for key in list(state_dict.keys()):  # need to copy keys here because we mutate in loop
             #     self.patch_instance_norm_state_dict(state_dict, self.model_G3, key.split('.'))
             # self.model_G3.load_state_dict(state_dict)
@@ -157,9 +161,15 @@ class RainCycleModel(BaseModel):
 
             # define and initialize optimizers. You can define one optimizer for each network.
             # If two networks are updated at the same time, you can use itertools.chain to group them. See cycle_gan_model.py for an example.
-            parameters_list=[dict(params=self.netG1.parameters(), lr=opt.lr / 100)]
+            if '1' in self.opt.init_derain:
+                parameters_list=[dict(params=self.netG1.parameters(), lr=opt.lr / 100)]
+            else:
+                parameters_list = [dict(params=self.netG1.parameters(), lr=opt.lr)]
+            if '3' in self.opt.init_derain:
+                parameters_list.append(dict(params=self.netG3.parameters(), lr=opt.lr / 10))
+            else:
+                parameters_list.append(dict(params=self.netG3.parameters(), lr=opt.lr))
             parameters_list.append(dict(params=self.netG2.parameters(), lr=opt.lr))
-            parameters_list.append(dict(params=self.netG3.parameters(), lr=opt.lr / 10))
             parameters_list.append(dict(params=self.netG4.parameters(), lr=opt.lr))
             self.optimizer_G = torch.optim.Adam(parameters_list, lr=opt.lr, betas=(opt.beta1, 0.999))
             self.optimizer_D_Os = torch.optim.Adam(self.netD_Os.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
