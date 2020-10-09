@@ -37,9 +37,15 @@ test_num = len(total_list) - 2*train_num
 # print('Os and Bs over.')
 
 # Testing
+count = 0
 for Ot_name in total_list:
     little_name = Ot_name.split('\\')[-1]
-    shutil.copy(os.path.join(Ot_src_dir,little_name), os.path.join(test_root,'Ot',little_name))
-    shutil.copy(os.path.join(B_src_dir,little_name), os.path.join(test_root, 'Bt',little_name))
-    shutil.copy(os.path.join(Os_src_dir, Ot_name), os.path.join(test_root, 'Os', little_name))
-    shutil.copy(os.path.join(B_src_dir, little_name), os.path.join(test_root, 'Bs', little_name))
+    if not os.path.exists(os.path.join(train_root, 'Os',little_name)):
+        if not os.path.exists(os.path.join(train_root, 'Ot',little_name)):
+            count += 1
+            shutil.copy(os.path.join(Ot_src_dir,little_name), os.path.join(test_root,'Ot',little_name))
+            shutil.copy(os.path.join(B_src_dir,little_name), os.path.join(test_root, 'Bt',little_name))
+            shutil.copy(os.path.join(Os_src_dir, Ot_name), os.path.join(test_root, 'Os', little_name))
+            shutil.copy(os.path.join(B_src_dir, little_name), os.path.join(test_root, 'Bs', little_name))
+
+print(count)
