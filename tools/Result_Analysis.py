@@ -6,7 +6,7 @@ import numpy as np
 
 ubuntu = 0
 windows = 1
-platform = ubuntu
+platform = windows
 
 def crop_and_resize_square(img, tosize = 400):
     height, width = img.shape[0], img.shape[1]
@@ -20,32 +20,34 @@ def crop_and_resize_square(img, tosize = 400):
 
 
 def Dataset_PSNR():
-    Dataset_path = r'G:\Dataset\RainCycleGAN_dataset\cityRH'
-    Train_Bs_list = os.listdir(os.path.join(Dataset_path, 'train','B_s'))
-    Train_Os_list = os.listdir(os.path.join(Dataset_path, 'train','O_s'))
-    Train_Bt_list = os.listdir(os.path.join(Dataset_path, 'train','B_t'))
-    Train_Ot_list = os.listdir(os.path.join(Dataset_path, 'train','O_t'))
-    Test_Bs_list = os.listdir(os.path.join(Dataset_path, 'test', 'B_s'))
-    Test_Os_list = os.listdir(os.path.join(Dataset_path, 'test', 'O_s'))
-    Test_Ot_list = os.listdir(os.path.join(Dataset_path, 'test', 'O_t'))
-    Test_Bt_list = os.listdir(os.path.join(Dataset_path, 'test', 'B_t'))
+    Dataset_path = r'E:\Dataset\RainCycleGAN_dataset\middle_cityRH'
+    Train_Bs_list = os.listdir(os.path.join(Dataset_path, 'train','Bs'))
+    Train_Os_list = os.listdir(os.path.join(Dataset_path, 'train','Os'))
+    Train_Bt_list = os.listdir(os.path.join(Dataset_path, 'train','Bt'))
+    Train_Ot_list = os.listdir(os.path.join(Dataset_path, 'train','Ot'))
+    Test_Bs_list = os.listdir(os.path.join(Dataset_path, 'test', 'Bs'))
+    Test_Os_list = os.listdir(os.path.join(Dataset_path, 'test', 'Os'))
+    Test_Ot_list = os.listdir(os.path.join(Dataset_path, 'test', 'Ot'))
+    Test_Bt_list = os.listdir(os.path.join(Dataset_path, 'test', 'Bt'))
     aver_psnr_train = 0
     aver_psnr_test = 0
     # count = 1
     # for train_name in Train_Bs_list:
-    #     bs_file = cv2.imread(os.path.join(Dataset_path,'train','B_s',train_name))
-    #     os_file = cv2.imread(os.path.join(Dataset_path,'train','O_s',train_name))
-    #     tmp_psnr_bs = compare_psnr(bs_file, os_file)
+    #     bs_file = cv2.imread(os.path.join(Dataset_path,'train','Bs',train_name))
+    #     os_file = cv2.imread(os.path.join(Dataset_path,'train','Os',train_name))
+    #     # tmp_psnr_bs = compare_psnr(bs_file, os_file)
+    #     tmp_psnr_bs = compare_ssim(bs_file, os_file, multichannel=True)
     #     print('train %d/1400 tmp_psnr:'%count, tmp_psnr_bs)
     #     aver_psnr_train = (aver_psnr_train * count + tmp_psnr_bs) / (count + 1)
     #     count += 1
     count = 1
-    for test_name in Test_Bt_list:
-        bs_file = cv2.imread(os.path.join(Dataset_path, 'test', 'B_t', test_name))
+    for test_name in Test_Bs_list:
+        bs_file = cv2.imread(os.path.join(Dataset_path, 'test', 'Bs', test_name))
         bs_file = crop_and_resize_square(bs_file, tosize=256)
-        os_file = cv2.imread(os.path.join(Dataset_path, 'test', 'O_t', test_name))
+        os_file = cv2.imread(os.path.join(Dataset_path, 'test', 'Os', test_name))
         os_file = crop_and_resize_square(os_file, tosize=256)
-        tmp_psnr_bs = compare_psnr(bs_file, os_file)
+        # tmp_psnr_bs = compare_psnr(bs_file, os_file)
+        tmp_psnr_bs = compare_ssim(bs_file, os_file, multichannel=True)
         print('test %d/175 tmp_psnr:'%count, tmp_psnr_bs)
         aver_psnr_test = (aver_psnr_test * count + tmp_psnr_bs) / (count + 1)
         count += 1
@@ -55,7 +57,7 @@ def Dataset_PSNR():
 
 def Result_PSNR(experiment_name):
     if platform:
-        result_path = r'G:\Projects\RainCycleGAN_cross\results'
+        result_path = r'E:\Projects\RainCycleGAN_cross\results'
         # result_path = r'D:\LowLevelforReal\RainCycleGAN_cross\results'
     else:
         # result_path = r'/media/solanliu/YYT2T/Projects/RainCycleGAN_cross/results'
@@ -109,7 +111,7 @@ def Result_PSNR(experiment_name):
 
 def Result_SSIM(experiment_name):
     if platform:
-        result_path = r'G:\Projects\RainCycleGAN_cross\results'
+        result_path = r'E:\Projects\RainCycleGAN_cross\results'
         # result_path = r'D:\LowLevelforReal\RainCycleGAN_cross\results'
     else:
         # result_path = r'/media/solanliu/YYT2T/Projects/RainCycleGAN_cross/results'
@@ -247,6 +249,6 @@ def Result_single_PSNR(experiment_name):
 
 if __name__ == '__main__':
     # Result_single_PSNR('middle_UnetDerain')
-    Result_PSNR('m_lrs1e-4')
+    # Result_SSIM('m_lrs1e-4')
     # Result_SSIM()
-    # Dataset_PSNR()
+    Dataset_PSNR()

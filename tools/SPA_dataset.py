@@ -119,14 +119,15 @@ def debug_spa_gen1():
 
 def Cut_datas():
     bs_dir = r'E:\Dataset\RainCycleGAN_dataset\SPA\train\Bs'
-    bt_dir = r'E:\Dataset\RainCycleGAN_dataset\SPA\train\Bt'
-    Ot_dir = r'E:\Dataset\RainCycleGAN_dataset\SPA\train\Ot'
-    Ot_img_list = os.listdir(Ot_dir)
+    dir_to_cut = r'E:\Dataset\RainCycleGAN_dataset\SPA\train\Os'
+    final_dir = r'E:\Dataset\RainCycleGAN_dataset\SPA\train\Bs'
+    img_list = os.listdir(dir_to_cut)
     count = 0
-    for img_name in Ot_img_list:
-        if not os.path.exists(os.path.join(bt_dir, img_name)):
-            os.remove(os.path.join(Ot_dir,img_name))
+    for img_name in img_list:
+        if not os.path.exists(os.path.join(final_dir, img_name)):
+            os.remove(os.path.join(dir_to_cut,img_name))
             # print(img_name)
+            pass
         else:
             count+=1
     print(count)
@@ -135,6 +136,6 @@ def Cut_datas():
 
 if __name__ =='__main__':
     # Copying_Syn_data_Bs()
-    writing_test_bs_txt()
-    # Cut_datas()
+    # writing_test_bs_txt()
+    Cut_datas()
     # debug_spa_gen1()
