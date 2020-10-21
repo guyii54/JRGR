@@ -106,21 +106,29 @@ def write_syn_txt():
         for img_name in img_list:
             f.write('%s\n'%img_name)
 
-def debug_spa_gen1():
-    img_file = r'E:\Dataset\Spatial_Real_Dataset\Training\real_world\Os\rain\simu_leftImg8bit\017_12_5.png'
-    import cv2
-    img = cv2.imread(img_file)
-    summ = 0
-    for i in range(img.shape[0]):
-        for j in range(img.shape[1]):
-            pixel = img[i,j,0]
-            if pixel != 0:
-                print(i,j)
+# def debug_spa_gen1():
+#     img_file = r'E:\Dataset\Spatial_Real_Dataset\Training\real_world\Os\rain\simu_leftImg8bit\017_12_5.png'
+#     import cv2
+#     img = cv2.imread(img_file)
+#     summ = 0
+#     for i in range(img.shape[0]):
+#         for j in range(img.shape[1]):
+#             pixel = img[i,j,0]
+#             if pixel != 0:
+#                 print(i,j)
+
+def cut_str_gt_in_Bt_in_test():
+    Bt_dir = r'E:\Dataset\RainCycleGAN_dataset\SPA_House\test\picked_gt'
+    os.chdir(Bt_dir)
+    Bt_list = os.listdir(Bt_dir)
+    for Bt_name in Bt_list:
+        Bt_new_name = Bt_name.replace('gt','')
+        print(Bt_new_name)
+        os.rename(Bt_name, Bt_new_name)
 
 def Cut_datas():
-    bs_dir = r'E:\Dataset\RainCycleGAN_dataset\SPA\train\Bs'
-    dir_to_cut = r'E:\Dataset\RainCycleGAN_dataset\SPA\train\Os'
-    final_dir = r'E:\Dataset\RainCycleGAN_dataset\SPA\train\Bs'
+    dir_to_cut = r'E:\Dataset\RainCycleGAN_dataset\SPA_House\test\Bs'
+    final_dir = r'E:\Dataset\RainCycleGAN_dataset\SPA_House\test\Os'
     img_list = os.listdir(dir_to_cut)
     count = 0
     for img_name in img_list:
@@ -133,9 +141,34 @@ def Cut_datas():
     print(count)
 
 
+def Pick_SPA_House():
+    SPA_root = r'E:\Dataset\RainCycleGAN_dataset\SPA'
+    SPA_house_root = r'E:\Dataset\RainCycleGAN_dataset\SPA_House'
+    Os_list = os.listdir(os.path.join(SPA_house_root,'train','Os'))
+    Ot_list = os.listdir(os.path.join(SPA_house_root,'train','Ot'))
+    for Os_name in Os_list:
+        shutil.copy(os.path.join(SPA_root,'train','Bs',Os_name),os.path.join(os.path.join(SPA_house_root), 'train', 'Bs', Os_name))
+    for Ot_name in Ot_list:
+        shutil.copy(os.path.join(SPA_root,'train','Bt',Ot_name),os.path.join(os.path.join(SPA_house_root), 'train', 'Bt', Ot_name))
+
+
+def process_test_file():
+    test_picked_path = r'E:\Dataset\RainCycleGAN_dataset\SPA_House\test\picked_gt'
+    Ot_source_path = r'E:\Dataset\Spatial_Real_Dataset\Training\real_world\Os\rain\simu_leftImg8bit'
+    Ot_target_path = r'E:\Dataset\RainCycleGAN_dataset\SPA_House\test\Os'
+    img_list = os.listdir(test_picked_path)
+    # txt_file = r'E:\Dataset\RainCycleGAN_dataset\SPA_House\test\test.txt'
+    # with open(txt_file, 'w') as f:
+    for img_name in img_list:
+        print(os.path.join(Ot_target_path, img_name))
+        shutil.copy(os.path.join(Ot_source_path, img_name), os.path.join(Ot_target_path, img_name))
+
 
 if __name__ =='__main__':
     # Copying_Syn_data_Bs()
     # writing_test_bs_txt()
     Cut_datas()
+    # Pick_SPA_House()
+    # process_test_file()
+    # cut_str_gt_in_Bt_in_test()
     # debug_spa_gen1()

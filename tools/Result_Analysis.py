@@ -3,10 +3,36 @@ import os
 from skimage.measure import compare_psnr, compare_ssim
 import fnmatch
 import numpy as np
+from util.util import tensor2im
+import torch
+import torchvision.transforms as transforms
 
 ubuntu = 0
 windows = 1
 platform = windows
+
+def See_Rain_single_image():
+    rainy_image_path = r'F:\Research\2021 CVPR\Figures\Figure2\pics\266_3_0_Os.png'
+    clean_image_path = r'F:\Research\2021 CVPR\Figures\Figure2\pics\266_3_0_Bt.png'
+    save_path = r'F:\Research\2021 CVPR\Figures\Figure2\pics\266_3_0_Rs.png'
+    transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        ])
+    rainy_image_np = cv2.imread(rainy_image_path)
+    rainy_image_np = cv2.cvtColor(rainy_image_np, cv2.COLOR_BGR2RGB)
+    rainy_tensor = transform(rainy_image_np)
+    clean_image_np = cv2.imread(clean_image_path)
+    clean_image_np = cv2.cvtColor(clean_image_np, cv2.COLOR_BGR2RGB)
+    clean_tensor = transform(clean_image_np)
+    R_tensor = rainy_tensor - clean_tensor
+    R_tensor = torch.unsqueeze(R_tensor, 0)
+    R_np = tensor2im(R_tensor)
+    cv2.imwrite(save_path, R_np)
+
+
+
+
 
 def crop_and_resize_square(img, tosize = 400):
     height, width = img.shape[0], img.shape[1]
@@ -20,7 +46,7 @@ def crop_and_resize_square(img, tosize = 400):
 
 
 def Dataset_PSNR():
-    Dataset_path = r'E:\Dataset\RainCycleGAN_dataset\middle_cityRH'
+    Dataset_path = r'E:\Dataset\RainCycleGAN_dataset\SPA_House'
     Train_Bs_list = os.listdir(os.path.join(Dataset_path, 'train','Bs'))
     Train_Os_list = os.listdir(os.path.join(Dataset_path, 'train','Os'))
     Train_Bt_list = os.listdir(os.path.join(Dataset_path, 'train','Bt'))
@@ -46,8 +72,8 @@ def Dataset_PSNR():
         bs_file = crop_and_resize_square(bs_file, tosize=256)
         os_file = cv2.imread(os.path.join(Dataset_path, 'test', 'Os', test_name))
         os_file = crop_and_resize_square(os_file, tosize=256)
-        # tmp_psnr_bs = compare_psnr(bs_file, os_file)
-        tmp_psnr_bs = compare_ssim(bs_file, os_file, multichannel=True)
+        tmp_psnr_bs = compare_psnr(bs_file, os_file)
+        # tmp_psnr_bs = compare_ssim(bs_file, os_file, multichannel=True)
         print('test %d/175 tmp_psnr:'%count, tmp_psnr_bs)
         aver_psnr_test = (aver_psnr_test * count + tmp_psnr_bs) / (count + 1)
         count += 1
@@ -252,3 +278,4 @@ if __name__ == '__main__':
     # Result_SSIM('m_lrs1e-4')
     # Result_SSIM()
     Dataset_PSNR()
+    # See_Rain_single_image()
