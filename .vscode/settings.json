@@ -1,0 +1,8 @@
+{
+    "python.pythonPath": "D:\\Anaconda3\\envs\\yuntong\\python.exe",
+    "python.linting.pylintArgs": [
+        "--disable=E1101",
+        "--disable=W,C",
+        "--generate-members"
+    ]
+}

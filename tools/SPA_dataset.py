@@ -127,8 +127,8 @@ def cut_str_gt_in_Bt_in_test():
         os.rename(Bt_name, Bt_new_name)
 
 def Cut_datas():
-    dir_to_cut = r'E:\Dataset\RainCycleGAN_dataset\SPA_House\test\Bs'
-    final_dir = r'E:\Dataset\RainCycleGAN_dataset\SPA_House\test\Os'
+    dir_to_cut = r'E:\Dataset\RainCycleGAN_dataset\SPA_Select\train\Bs'
+    final_dir = r'E:\Dataset\RainCycleGAN_dataset\SPA_Select\train\Os'
     img_list = os.listdir(dir_to_cut)
     count = 0
     for img_name in img_list:

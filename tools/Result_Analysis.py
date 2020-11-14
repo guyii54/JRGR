@@ -3,32 +3,32 @@ import os
 from skimage.measure import compare_psnr, compare_ssim
 import fnmatch
 import numpy as np
-from util.util import tensor2im
-import torch
-import torchvision.transforms as transforms
+# from util.util import tensor2im
+# import torch
+# import torchvision.transforms as transforms
 
 ubuntu = 0
 windows = 1
 platform = windows
 
-def See_Rain_single_image():
-    rainy_image_path = r'F:\Research\2021 CVPR\Figures\Figure2\pics\266_3_0_Os.png'
-    clean_image_path = r'F:\Research\2021 CVPR\Figures\Figure2\pics\266_3_0_Bt.png'
-    save_path = r'F:\Research\2021 CVPR\Figures\Figure2\pics\266_3_0_Rs.png'
-    transform = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-        ])
-    rainy_image_np = cv2.imread(rainy_image_path)
-    rainy_image_np = cv2.cvtColor(rainy_image_np, cv2.COLOR_BGR2RGB)
-    rainy_tensor = transform(rainy_image_np)
-    clean_image_np = cv2.imread(clean_image_path)
-    clean_image_np = cv2.cvtColor(clean_image_np, cv2.COLOR_BGR2RGB)
-    clean_tensor = transform(clean_image_np)
-    R_tensor = rainy_tensor - clean_tensor
-    R_tensor = torch.unsqueeze(R_tensor, 0)
-    R_np = tensor2im(R_tensor)
-    cv2.imwrite(save_path, R_np)
+# def See_Rain_single_image():
+#     rainy_image_path = r'F:\Research\2021 CVPR\Figures\Figure2\pics\266_3_0_Os.png'
+#     clean_image_path = r'F:\Research\2021 CVPR\Figures\Figure2\pics\266_3_0_Bt.png'
+#     save_path = r'F:\Research\2021 CVPR\Figures\Figure2\pics\266_3_0_Rs.png'
+#     transform = transforms.Compose([
+#             transforms.ToTensor(),
+#             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+#         ])
+#     rainy_image_np = cv2.imread(rainy_image_path)
+#     rainy_image_np = cv2.cvtColor(rainy_image_np, cv2.COLOR_BGR2RGB)
+#     rainy_tensor = transform(rainy_image_np)
+#     clean_image_np = cv2.imread(clean_image_path)
+#     clean_image_np = cv2.cvtColor(clean_image_np, cv2.COLOR_BGR2RGB)
+#     clean_tensor = transform(clean_image_np)
+#     R_tensor = rainy_tensor - clean_tensor
+#     R_tensor = torch.unsqueeze(R_tensor, 0)
+#     R_np = tensor2im(R_tensor)
+#     cv2.imwrite(save_path, R_np)
 
 
 
@@ -93,32 +93,37 @@ def Result_PSNR(experiment_name):
     aver_psnr_bs = 0.
     aver_psnr_bt = 0.
     bs_list = os.listdir(image_path)
-    bs_list = fnmatch.filter(bs_list, '*_pred_pred_Bs.png')
+    bs_list = fnmatch.filter(bs_list, '*_pred_Bt.png')
+    # bs_list = fnmatch.filter(bs_list, '*_pred_Bt.png')
+    # bs_list = fnmatch.filter(bs_list, '_fake_B.png')
+    # count = 1
+    # for name in bs_list:
+        # little_name = name.replace('pred_pred_Bs.png', '')
+    #     # print(little_name)
+    #     pred_Bs_file = little_name + 'pred_Bs.png'
+    #     Bs_file = little_name + 'Bs.png'
+    #     pred_Bs = cv2.imread(os.path.join(image_path, pred_Bs_file))
+    #     Bs = cv2.imread(os.path.join(image_path, Bs_file))
+    #     try:
+    #         tmp_psnr_bs = compare_psnr(pred_Bs, Bs)
+    #         print('tmp_psnr:', tmp_psnr_bs)
+    #         aver_psnr_bs = (aver_psnr_bs * count + tmp_psnr_bs) / (count + 1)
+    #         count += 1
+    #     except:
+    #         print('pass:',pred_Bs_file)
+    #         pass
+
     count = 1
     for name in bs_list:
-        little_name = name.replace('pred_pred_Bs.png', '')
+        little_name = name.replace('_pred_Bt.png', '')
+        # little_name = name.replace('_fake_', '')
         # print(little_name)
-        pred_Bs_file = little_name + 'pred_Bs.png'
-        Bs_file = little_name + 'Bs.png'
-        pred_Bs = cv2.imread(os.path.join(image_path, pred_Bs_file))
-        Bs = cv2.imread(os.path.join(image_path, Bs_file))
-        try:
-            tmp_psnr_bs = compare_psnr(pred_Bs, Bs)
-            print('tmp_psnr:', tmp_psnr_bs)
-            aver_psnr_bs = (aver_psnr_bs * count + tmp_psnr_bs) / (count + 1)
-            count += 1
-        except:
-            print('pass:',pred_Bs_file)
-            pass
-
-    count = 0
-    for name in bs_list:
-        little_name = name.replace('pred_pred_Bs.png', '')
-        # print(little_name)
-        pred_Bt_file = little_name + 'pred_Bt.png'
-        Bt_file = little_name + 'Bt.png'
+        pred_Bt_file = little_name + '_pred_Bt.png'
+        Bt_file = little_name + '_Bt.png'
         pred_Bt = cv2.imread(os.path.join(image_path, pred_Bt_file))
-        Bt= cv2.imread(os.path.join(image_path, Bt_file))
+        Bt = cv2.imread(os.path.join(image_path, Bt_file))
+        cv2.imshow('img',pred_Bt)
+        cv2.waitKey()
         try:
             tmp_psnr_bt = compare_psnr(pred_Bt, Bt)
             print('tmp_psnr:', tmp_psnr_bt)
@@ -147,17 +152,20 @@ def Result_SSIM(experiment_name):
     aver_ssim_bs = 0.
     aver_ssim_bt = 0.
     test_list = os.listdir(image_path)
+    # test_list = fnmatch.filter(test_list, '*_fake_B.png')
     test_list = fnmatch.filter(test_list, '*_pred_pred_Bs.png')
     count = 1
     for name in test_list:
         little_name = name.replace('pred_pred_Bs.png', '')
+        # little_name = name.replace('fake_B.png', '')
         # print(little_name)
-        pred_Bs_file = little_name + 'pred_Bs.png'
-        Bs_file = little_name + 'Bs.png'
+        pred_Bs_file = little_name + 'pred_pred_Bs.png'
+        Bs_file = little_name + 'pred_Bs.png'
         pred_Bs = cv2.imread(os.path.join(image_path, pred_Bs_file))
         Bs = cv2.imread(os.path.join(image_path, Bs_file))
         try:
             tmp_ssim_bs = compare_ssim(pred_Bs, Bs, multichannel=True)
+            # tmp_ssim_bs = compare_psnr(pred_Bs, Bs)
             print('tmp_ssim:', tmp_ssim_bs)
             aver_ssim_bs = (aver_ssim_bs * count + tmp_ssim_bs) / (count + 1)
             count += 1
@@ -275,7 +283,7 @@ def Result_single_PSNR(experiment_name):
 
 if __name__ == '__main__':
     # Result_single_PSNR('middle_UnetDerain')
-    # Result_SSIM('m_lrs1e-4')
+    Result_PSNR('RO2_lrs1e-4_Init13_50_4_0')
     # Result_SSIM()
-    Dataset_PSNR()
+    # Dataset_PSNR()
     # See_Rain_single_image()
