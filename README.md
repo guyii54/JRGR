@@ -21,7 +21,7 @@ Torch implementation for Closing the Loop: Joint Rain Generation and Removal via
 Our collected dataset RealRain can be downlowed here.
 
 ## JRGR train/test
-- Download or make your own dataset, the dataset should have the following structure:
+- Download our dataset or make your own dataset, the dataset should have the following structure:
   ```
   -train
     -Ot
