@@ -1,6 +1,45 @@
 # Closing the Loop: Joint Rain Generation and Removal via Disentangled Image Translation
 
-Torch implementation for Closing the Loop: Joint Rain Generation and Removal via Disentangled Image Translation
+Torch implementation Closing the Loop: Joint Rain Generation and Removal via Disentangled Image Translation in CVPR 2021
+
+
+# Demo
+
+## Rain Removal and Generation
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="Demo_derain.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">Real Rain Removal</div>
+</center>
+
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="Demo_Generation.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">Real Rain Generation</div>
+</center>
+
+## Network Architecture
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="Architecture.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">Architecture</div>
+</center>
+
 
 # Prerequisites
 - Linux or Windows
