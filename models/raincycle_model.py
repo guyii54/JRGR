@@ -1,19 +1,12 @@
-"""Model class template
+"""JRGR model, rain rempval and generation in two cycles.
+In this code, subsript t is for "target", and also for "real", s is for "source" and also for "synthetic",
+which means, for example, O_t is the rainy image in real dataset, B_s is the background in synthetic dataset.
+For the sub-networks, we denote netG1 for synthetic rain removal, netG2 for real rain generation, 
+netG3 for real rain removal, netG4 for synthetic rain generation. 
 
-This module provides a template for users to implement custom models.
-You can specify '--model template' to use this model.
-The class name should be consistent with both the filename and its model option.
-The filename should be <model>_dataset.py
-The class name should be <Model>Dataset.py
-It implements a simple image-to-image translation baseline based on regression loss.
-Given input-output pairs (data_A, data_B), it learns a network netG that can minimize the following L1 loss:
-    min_<netG> ||netG(data_A) - data_B||_1
-You need to implement the following functions:
-    <modify_commandline_options>:　Add model-specific options and rewrite default values for existing options.
-    <__init__>: Initialize this model class.
-    <set_input>: Unpack input data and perform data pre-processing.
-    <forward>: Run forward pass. This will be called by both <optimize_parameters> and <test>.
-    <optimize_parameters>: Update network weights; it will be called in every training iteration.
+We use pre-training strategy in the final for the best results. Details can be seen in paper.
+
+Our code is inspired by https://github.com/junyanz/CycleGAN. Thanks for their contribution.
 """
 import torch
 from .base_model import BaseModel
@@ -28,22 +21,13 @@ import os
 class RainCycleModel(BaseModel):
     @staticmethod
     def modify_commandline_options(parser, is_train=True):
-        """Add new model-specific options and rewrite default values for existing options.
-
-        Parameters:
-            parser -- the option parser
-            is_train -- if it is training phase or test phase. You can use this flag to add training-specific or test-specific options.
-
-        Returns:
-            the modified parser.
-        """
         parser.set_defaults(dataset_mode='rain')  # You can rewrite default values for this model. For example, this model usually uses aligned dataset as its dataset.
         if is_train:
             parser.add_argument('--lambda_MSE', type=float, default=40.0, help='weight for the mse loss')  # You can define new arguments for this model.
             parser.add_argument('--lambda_GAN', type=float, default=4.0, help='weight for the gan loss')
             parser.add_argument('--lambda_Cycle', type=float, default=40.0, help='weight for the cycle loss')
             parser.add_argument('--lambda_Idt', type=float, default=20.0, help='weight for the identity loss')
-            parser.add_argument('--init_derain', type=str, default='1,3', help='weight for the identity loss')
+            parser.add_argument('--init_derain', type=str, default='1,3', help='low which pred-trained model. 0 for no pre-train, 1 for loading G1 pre-trained parameters, 3 for loading G3')
 
         return parser
 
@@ -77,15 +61,12 @@ class RainCycleModel(BaseModel):
         self.model_names = ['G1', 'G2', 'G3', 'G4', 'D_B', 'D_Os', 'D_Ot']
 
 
-        # define networks; you can use opt.isTrain to specify different behaviors for training and test.
+        # netG1 for synthetic rain removal
+        # netG2 for real rain generation
+        # netG3 for real rain removal
+        # netG4 for synthetic rain generation
         self.netG2 = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf, opt.netG, gpu_ids=self.gpu_ids)
         self.netG4 = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf, opt.netG, gpu_ids=self.gpu_ids)
-        # self.netG1 = networks.SingleDNCNN(channels=3)
-        # self.netG3 = networks.SingleDNCNN(channels=3)
-        # self.netG1.to(self.device)
-        # self.netG1 = torch.nn.DataParallel(self.netG1, self.gpu_ids)
-        # self.netG3.to(self.device)
-        # self.netG3 = torch.nn.DataParallel(self.netG3, self.gpu_ids)
         self.netG1 = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf, 'unet_128', gpu_ids=self.gpu_ids)
         self.netG3 = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf, 'unet_128', gpu_ids=self.gpu_ids)
 
@@ -98,32 +79,6 @@ class RainCycleModel(BaseModel):
                                               opt.n_layers_D, opt.norm, opt.init_type, opt.init_gain, self.gpu_ids)
 
         if self.isTrain:  # only defined during training time
-            # -----------load pre-trained model for G1 and G3--------------
-            # self.netG1_model = self.netG1.module
-            # self.netG3_model = self.netG3.module
-            # load_filename = 'latest_net_DNCNN.pth'
-            # if self.opt.singleDNCNN_load_path == None:
-            #     print('FileNotFoundError: singleDNCNN_load_path is not found!')
-            #     raise FileNotFoundError
-            # load_path = os.path.join(self.opt.singleDNCNN_load_path, load_filename)
-            # save_model = torch.load(load_path, map_location=self.device)
-            # SingleDncnn_dict = {}
-            # for k, v in save_model.items():
-            #     if 'dncnn_front_1' in k:
-            #         SingleDncnn_dict[k.replace('dncnn_front_1', 'dncnn_front')] = v
-            # for k, v in save_model.items():
-            #     if 'dncnn_back' in k:
-            #         SingleDncnn_dict[k] = v
-            # model_dict1 = self.netG1_model.state_dict()
-            # model_dict1.update(SingleDncnn_dict)
-            # self.netG1_model.load_state_dict(model_dict1)
-            #
-            # model_dict2 = self.netG3_model.state_dict()
-            # model_dict2.update(SingleDncnn_dict)
-            # self.netG3_model.load_state_dict(model_dict2)
-            # # self.netDNCNN_model.fix_parameters()
-            # print('initial netG1, netG3 with %s successfully!' % load_path)
-            # self.fix_parameters()
             if self.opt.init_derain != '0':
                 load_filename = 'latest_net_UnetDerain.pth'
                 if self.opt.singleDNCNN_load_path == None:
@@ -134,14 +89,11 @@ class RainCycleModel(BaseModel):
                 if '1' in self.opt.init_derain:
                     model_G1 = self.netG1.module
                     model_G1.load_state_dict(state_dict)
+                    print('initial netG1 with %s successfully!' % load_path)
                 if '3' in self.opt.init_derain:
                     model_G3 = self.netG3.module
                     model_G3.load_state_dict(state_dict)
-                    print('initial netG1, netG3 with %s successfully!' % load_path)
-            # for key in list(state_dict.keys()):  # need to copy keys here because we mutate in loop
-            #     self.patch_instance_norm_state_dict(state_dict, self.model_G3, key.split('.'))
-            # self.model_G3.load_state_dict(state_dict)
-            # self.netG1.eval()
+                    print('initial netG3 with %s successfully!' % load_path)
 
             # define your loss functions. You can use losses provided by torch.nn such as torch.nn.L1Loss.
             # We also provide a GANLoss class "networks.GANLoss". self.criterionGAN = networks.GANLoss().to(self.device)

@@ -78,10 +78,10 @@ If you have the ground truth of real rainy images and you want to visualize them
 - Train the model
   ```
   # Proposed training strategy: pre-train and joint train
-  python train.py --dataroot ../Real_Overcast --dataset_mode rain --model unetderain --name RO_UnetDerain
-  python train.py --dataroot ../Real_Overcast --dataset_mode rain --unet_load_path ./checkpoints/RO_UnetDerain --model raincycle --name RO_JRGR
+  python train.py --dataroot ./dataset/cityscape --dataset_mode rain --model unetderain --name UnetDerain
+  python train.py --dataroot ./dataset/cityscape --dataset_mode rain --unet_load_path ./checkpoints/UnetDerain --model raincycle --name JRGR --init_derain 1,3 RO_JRGR
   # Sencondary training strategy: directly joint train
-  python train.py --dataroot ../Real_Overcast --dataset_mode rain --model raincycle --name RO_JRGR --init 0
+  python train.py --dataroot ../Real_Overcast --dataset_mode rain --model raincycle --name RO_JRGR --init_derain 0
   ```
 
 - Test the model
