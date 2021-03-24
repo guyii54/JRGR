@@ -58,6 +58,7 @@ Torch implementation Closing the Loop: Joint Rain Generation and Removal via Dis
 
 ## Dataset
 Our collected dataset RealRain can be downlowed here.
+https://github.com/guyii54/Real-Rainy-Image-Datasets
 
 ## JRGR train/test
 - Download our dataset or make your own dataset, the dataset should have the following structure:
@@ -79,14 +80,14 @@ If you have the ground truth of real rainy images and you want to visualize them
   ```
   # Proposed training strategy: pre-train and joint train
   python train.py --dataroot ./dataset/cityscape --dataset_mode rain --model unetderain --name UnetDerain
-  python train.py --dataroot ./dataset/cityscape --dataset_mode rain --unet_load_path ./checkpoints/UnetDerain --model raincycle --name JRGR --init_derain 1,3 RO_JRGR
+  python train.py --dataroot ./dataset/cityscape --dataset_mode rain --unet_load_path ./checkpoints/UnetDerain --model raincycle --name JRGR --init_derain 1,3
   # Sencondary training strategy: directly joint train
-  python train.py --dataroot ../Real_Overcast --dataset_mode rain --model raincycle --name RO_JRGR --init_derain 0
+  python train.py --dataroot ./dataset/cityscape --dataset_mode rain --model raincycle --name JRGR --init_derain 0
   ```
 
 - Test the model
   ```
-  python test.py --dataroot ../Real_Overcast --dataset_mode rain --model raincycle --name RO_JRGR --init 0
+  python test.py --dataroot ./dataset/cityscape --dataset_mode rain --model raincycle --name JRGR
   ```
   The test results will be saved to a html file here: ./results/RO_JRGR/latest_test/index.html.
 
