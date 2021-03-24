@@ -93,4 +93,4 @@ If you have the ground truth of real rainy images and you want to visualize them
 
 # Citation
 
-Our code is inspired by [Cycle GAN](https://github.com/junyanz/CycleGAN)
+Our code is inspired by [Cycle GAN](https://github.com/junyanz/CycleGAN). We thanks for their contribution.
