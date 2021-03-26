@@ -1,6 +1,6 @@
 # Closing the Loop: Joint Rain Generation and Removal via Disentangled Image Translation
 
-Torch implementation Closing the Loop: Joint Rain Generation and Removal via Disentangled Image Translation in CVPR 2021
+Torch implementation Closing the Loop: Joint Rain Generation and Removal via Disentangled Image Translation in CVPR 2021. [[paper]](https://arxiv.org/abs/2103.13660)
 
 
 # Demo
