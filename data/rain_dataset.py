@@ -51,17 +51,20 @@ class RainDataset(BaseDataset):
         # get the image paths of your dataset;
         # self.image_paths = []  # You can call sorted(make_dataset(self.root, opt.max_dataset_size)) to get all the image paths under the directory self.root
         BaseDataset.__init__(self, opt)
+        self.Bt_access = opt.Bt_access
         self.data_root = opt.dataroot
         self.O_t_path = os.path.join(self.data_root,opt.phase,'Ot')
         self.O_s_path = os.path.join(self.data_root,opt.phase,'Os')
         self.B_s_path = os.path.join(self.data_root,opt.phase,'Bs')
-        self.B_t_path = os.path.join(self.data_root,opt.phase,'Bt')
+        if self.Bt_access:
+            self.B_t_path = os.path.join(self.data_root,opt.phase,'Bt')
+            self.B_t_name_list = os.listdir(self.B_t_path)
         self.O_t_name_list = os.listdir(self.O_t_path)
         self.O_s_name_list = os.listdir(self.O_s_path)
-        self.B_t_name_list = os.listdir(self.B_t_path)
         random.shuffle(self.O_t_name_list)
         random.shuffle(self.O_s_name_list)
-        random.shuffle(self.B_t_name_list)
+        if self.Bt_access:
+            random.shuffle(self.B_t_name_list)
 
         # define the default transform function. You can use <base_dataset.get_transform>; You can also define your custom transform function
         self.transform = transforms.Compose([
@@ -89,7 +92,8 @@ class RainDataset(BaseDataset):
         self.O_t_file = os.path.join(self.O_t_path, self.O_t_name_list[index])
         self.O_s_file = os.path.join(self.O_s_path, self.O_s_name_list[index])
         self.B_s_file = os.path.join(self.B_s_path, self.O_s_name_list[index])
-        self.B_t_file = os.path.join(self.B_t_path, self.O_t_name_list[index])
+        if self.Bt_access:
+            self.B_t_file = os.path.join(self.B_t_path, self.O_t_name_list[index])
 
         # needs to be a string
         # O_t = Image.open(self.O_t_file).convert('RGB')
@@ -98,11 +102,13 @@ class RainDataset(BaseDataset):
         O_t = cv2.imread(self.O_t_file)
         O_s = cv2.imread(self.O_s_file)
         B_s = cv2.imread(self.B_s_file)
-        B_t = cv2.imread(self.B_t_file)
         O_t = cv2.cvtColor(O_t, cv2.COLOR_BGR2RGB)
         O_s = cv2.cvtColor(O_s, cv2.COLOR_BGR2RGB)
         B_s = cv2.cvtColor(B_s, cv2.COLOR_BGR2RGB)
-        B_t = cv2.cvtColor(B_t, cv2.COLOR_BGR2RGB)
+        if self.Bt_access:
+            B_t = cv2.imread(self.B_t_file)
+            B_t = cv2.cvtColor(B_t, cv2.COLOR_BGR2RGB)
+
 
         # crop O_s and B_s
         img_size = min(O_s.shape[0], O_s.shape[1])
@@ -118,21 +124,30 @@ class RainDataset(BaseDataset):
         crop_x_loc = random.randint(0, img_size-crop_size)
         crop_y_loc = random.randint(0, img_size-crop_size)
         O_t = O_t[crop_x_loc:crop_x_loc + crop_size, crop_y_loc:crop_y_loc + crop_size, :]
-        B_t = B_t[crop_x_loc:crop_x_loc + crop_size, crop_y_loc:crop_y_loc + crop_size, :]
+        if self.Bt_access:
+            B_t = B_t[crop_x_loc:crop_x_loc + crop_size, crop_y_loc:crop_y_loc + crop_size, :]
 
 
         # needs to be a tensor
         O_t = self.transform(O_t)
         O_s = self.transform(O_s)
         B_s = self.transform(B_s)
-        B_t = self.transform(B_t)
-        return {
-            'O_t':O_t,
-            'O_s':O_s,
-            'B_s':B_s,
-            'B_t':B_t,
-            'path':self.O_s_file
-        }
+        if self.Bt_access:
+            B_t = self.transform(B_t)
+            return {
+                'O_t': O_t,
+                'O_s': O_s,
+                'B_s': B_s,
+                'B_t': B_t,
+                'path': self.O_s_file
+            }
+        else:
+            return {
+                'O_t':O_t,
+                'O_s':O_s,
+                'B_s':B_s,
+                'path':self.O_s_file
+            }
 
 
     def __len__(self):

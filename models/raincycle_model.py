@@ -81,10 +81,10 @@ class RainCycleModel(BaseModel):
         if self.isTrain:  # only defined during training time
             if self.opt.init_derain != '0':
                 load_filename = 'latest_net_UnetDerain.pth'
-                if self.opt.singleDNCNN_load_path == None:
-                    print('FileNotFoundError: singleDNCNN_load_path is not found!')
+                if self.opt.unet_load_path == None:
+                    print('FileNotFoundError: PreTrained_load_path is not found!')
                     raise FileNotFoundError
-                load_path = os.path.join(self.opt.singleDNCNN_load_path, load_filename)
+                load_path = os.path.join(self.opt.unet_load_path, load_filename)
                 state_dict = torch.load(load_path, map_location=str(self.device))
                 if '1' in self.opt.init_derain:
                     model_G1 = self.netG1.module
