@@ -52,7 +52,7 @@ class RainCycleModel(BaseModel):
                                  'pred_Rs', 'pred_Rst', 'pred_pred_Rt', 'pred_pred_Rts',
                                  'pred_Rt', 'pred_Rts', 'pred_pred_Rs', 'pred_pred_Rst']
         else:
-            self.visual_names = ['Os', 'Ot', 'Bs', 'Bt', 'Rs', 'Rt',
+            self.visual_names = ['Os', 'Ot', 'Bs', 'Rs',
                                  'pred_Bs', 'pred_Ot', 'pred_pred_Bs', 'pred_pred_Os',
                                  'pred_Bt', 'pred_Os', 'pred_pred_Bt', 'pred_pred_Ot',
                                  'pred_Rs', 'pred_Rst', 'pred_pred_Rt', 'pred_pred_Rts',
@@ -130,8 +130,6 @@ class RainCycleModel(BaseModel):
 
             self.optimizers = [self.optimizer_G, self.optimizer_D_Os, self.optimizer_D_Ot, self.optimizer_B]
         # Our program will automatically call <model.setup> to define schedulers, load networks, and print networks
-        else:
-            self.visual_names.append('Bt')
 
     def set_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
@@ -142,7 +140,7 @@ class RainCycleModel(BaseModel):
         self.Os = input['O_s'].to(self.device)
         self.Bs = input['B_s'].to(self.device)
         self.Ot = input['O_t'].to(self.device)
-        if not self.isTrain:
+        if not self.isTrain and self.opt.Bt_access:
             self.Bt = input['B_t'].to(self.device)
         # self.Bt = input['B_t'].to(self.device)
         self.image_paths = input['path']  # for test
@@ -153,9 +151,9 @@ class RainCycleModel(BaseModel):
 
     def forward(self):
         """Run forward pass. This will be called by both functions <optimize_parameters> and <test>."""
-        if not self.isTrain:
-            self.Rs = self.Os - self.Bs
+        if not self.isTrain and self.opt.Bt_access:
             self.Rt = self.Ot - self.Bt
+        self.Rs = self.Os - self.Bs
         # syn - real
         self.pred_Bs = self.netG1(self.Os)
         self.pred_Rs = self.Os - self.pred_Bs
