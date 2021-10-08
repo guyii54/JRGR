@@ -55,10 +55,17 @@ Torch implementation Closing the Loop: Joint Rain Generation and Removal via Dis
 
 - Install Pytorch 1.6.0 and other dependencies (e.g., torchvision, visdom and dominate). The requirment of main dependencies are listed in requirements.txt
 
+## Dataset and Model
+### Synthetic Datasets
+The JRGR models for synthetic rainy cityscape dataset are here.
 
-## Dataset
-Our collected dataset RealRain can be downlowed here.
-https://github.com/guyii54/Real-Rainy-Image-Datasets
+https://pan.baidu.com/s/1Q3nn61-LhA3Zo9eBcfNt_g
+
+extracting code：8x9g 
+
+
+### Real Datasets
+The JRGR model along with the large number of real captured photos will be released soon.
 
 ## JRGR train/test
 - Download our dataset or make your own dataset, the dataset should have the following structure:
